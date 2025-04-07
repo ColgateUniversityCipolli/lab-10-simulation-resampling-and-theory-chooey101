@@ -70,3 +70,46 @@ for (n in n_values) {
     stored_values <- rbind(stored_values, temp_df)
   }
 }
+
+simulation_plot <- ggplot(stored_values, aes(x = p, y = n, fill = moe)) +
+  geom_raster() +
+  scale_fill_viridis_c(option = "plasma") +
+  labs(
+    title = "Margin of Error by Sample Size (n) and Probability (p)",
+    x = "True Probability (p)",
+    y = "Sample Size (n)",
+    fill = "Margin of Error"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, face = "bold"),
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 12)
+  )
+
+#Part 4: actual margin of error calculation
+grid <- expand.grid(n = n_values, p = p_values)
+
+wilson_moe <- function(n, p, z = qnorm(0.975)) {
+  numerator <- z * sqrt(p * (1 - p) + (z^2 / (4 * n^2)))
+  denominator <- 1 + (z^2 / n)
+  return(numerator / denominator)
+}
+
+
+#apply to all data
+grid$moe <- mapply(wilson_moe, grid$n, grid$p)
+
+# Convert to tibble
+wilson_data <- as_tibble(grid)
+
+wilson_plot <- ggplot(wilson_data, aes(x = p, y = n, fill = moe)) +
+  geom_raster() +
+  scale_fill_viridis_c(option = "magma", direction = -1) +
+  labs(
+    title = "Wilson Margin of Error by Sample Size (n) and Probability (p)",
+    x = "True Proportion (p)",
+    y = "Sample Size (n)",
+    fill = "MOE"
+  ) +
+  theme_minimal()
