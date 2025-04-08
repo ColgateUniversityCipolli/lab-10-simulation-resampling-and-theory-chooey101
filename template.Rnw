@@ -41,93 +41,39 @@
 %\raggedcolumns % If your spacing gets messed up try uncommenting 
                 % this line
 \begin{abstract}
-This document provides a basic template for the 2-page labs we will complete each week. Here, briefly summarize what you did and why it might be helpful. Provide all the top-line conclusions, but avoid providing \emph{all} the details. Results should be limited to ``we show X, Y, and Z."
+This laboratory assignment aims to use \texttt{R} in order to understand how margins of error are calculated within Gallup polls. The first part of this assignment involved creating a basic simulation of the gallup data, which we would interact with graphically and through random re sampling to estimate the margin of error for the data. The graphical analysis conducted within this part led us to conclude that re sampling yields a more accurate estimate of margin of error than data simulation itself does. The second part of the assignment had us conduct many different simulations across varying sample sizes and probabilities. We first analyzed these simulations with our estimated margin of error, and then with the true margin of error, which led us to conclude that we may need to analyze a larger range of sample sizes in order to more accurately observe the relationship between margin of error and sample size.
 \end{abstract}
 
-\noindent \textbf{Keywords:} What topics does the lab cover concerning class? List 3-4 key terms here, separated by semicolons.
+\noindent \textbf{Keywords:} Resampling, Point Estimation, Margin of Error
 
 \section{Introduction}
-Provide an overarching summary of what you're talking about. In this section, you introduce the idea to the reader, and your goal is to pull them in. What's the mystery you aim to solve?
+This assignment aimed to analyze the derivation of a margin of error from the Gallup poll, a poll conducted by Gallup which surveyed US citizens of their current satisfaction with the position of the United States. We wanted to determine how this margin of error was calculated, and how the variation of sample size may affect its accuracy. To accomplish this, we first plan to simulate data for the Gallup in order to approximate its probability distribution. We also want to re sample this data, which involves randomly selecting representative samples of the population data with replacement. By analyzing the range within the distributions of these data both graphically and numerically, we hope to estimate an approximate margin of error, and determine the most efficient method of doing so. Following such, we plan to analyze how varying sample size and probability will effect the calculation of margin of error by conducting many different simulations across specific ranges of n and p. We also plan to use two different methods of calculating the margin of error for these simulations, comparing the differences and accuracy among each method.
 
-You want to provide enough background to understand the context of the work. Specifically, what is the question you are addressing? If it applies, describe what information currently exists about this problem, including citations, and explain how the question you're answering complements this work.
 
-Provide a roadmap of the structure of the paper. 
 
-\subsection{Intro Subsection}
-You might need/want to discuss the topics in subsections. Or, you may have multiple questions.
+\section{Simulating Data}
+Within this laboratory assignment, we were tasked with determining how the government derives the margin of errors that they report within the gallop poll, a poll which asks US citizens whether they are satisfied or dissatisfied with the current state of the country. The first step towards better understanding this question was using R to conduct a simulation study. Using a specified probability value of 0.39 to generate a random binomial distribution for the data, we simulated 10000 gallop polls, each with the same population of 1000. Plotting this distribution with a histogram and density plot as seen in figure 1 led to a conclusion that the simulated data is not skewed. Furthermore, the range between the distribution's middle 95 percent was approximately 100, meaning that this data had a margin of error close to + or - 50 percent. Comparing this with the + or - 2 percent reported by Gallup leads us to conclude that the conducted data simulation is not accurately representative of the population reported by Gallup.
 
 \begin{Figure}
-\includegraphics{penguins.pdf}
-\captionof{figure}{This is a figure!} \label{fig:penguins}
+\includegraphics[scale=0.6]{Resampling Plot.pdf}
+\caption{Histogram of Resampled Data}
+\label{fig1}
 \end{Figure}
 
-\begin{Figure}
-% latex table generated in R 4.3.3 by xtable 1.8-4 package
-% Tue Apr  1 07:26:31 2025
-%\begin{table}[H]% YOU NEED TO REPLACE THIS WITH FIGURE
-\centering
-\begin{tabular}{lrrrr}
-  \hline
-species & Mean & Median & SD & IQR \\ 
-  \hline
-Adelie & 3700.66 & 3700.00 & 458.57 & 650.00 \\ 
-  Chinstrap & 3733.09 & 3700.00 & 384.34 & 462.50 \\ 
-  Gentoo & 5076.02 & 5000.00 & 504.12 & 800.00 \\ 
-   \hline
-\end{tabular}
-%\caption{This is a table.} % YOU NEED TO CHANGE THIS TO captionof
-\captionof{table}{This is a table.} 
-\label{tab:penguins}
-%\end{table} % YOU NEED TO REPLACE THIS WITH FIGURE
-\end{Figure}
-<<eval=F, echo=F>>=
-library(tidyverse)
-library(palmerpenguins)
-pdf("penguins.pdf", width=3, height=2)
-ggplot(data=penguins)+
-  geom_boxplot(aes(x=species, y=body_mass_g))+
-  theme_bw()+
-  xlab("Species")+
-  ylab("Body Mass (g)")
-dev.off()
-
-library(xtable)
-penguins |>
-  group_by(species) |>
-  summarize(
-    Mean   = mean(body_mass_g, na.rm=T),
-    Median = median(body_mass_g, na.rm=T),
-    SD     = sd(body_mass_g, na.rm=T),
-    IQR    = IQR(body_mass_g, na.rm=T),
-  )|>
-  xtable(caption = "This is a table.",
-         label = "tab:penguins",
-         digits = 2 ) |>
-  print(table.placement="H",
-        include.rownames=F)
-@
-\section{Methods}
-Describe the data you are working with, if applicable. Describe the specific process you will follow to answer the question at hand. This does not mean you should write something like this.
-\begin{quote}
-\textit{I did this and then I did that and then I did this other thing and then..., and then..., and then...}
-\end{quote}
-Instead, it should provide a clear and concise narrative that flows from the problem specification in the Introduction to how you will approach answering it. This is where I would expect to see some citations for \texttt{R} packages you will use to conduct the statistical analysis reported in the Results section.
+\section{Resampling}
+The second part of this laboratory assignment involved the use of re sampling in order to approximate a probability distribution for the data reported by Gallup. This process involved using data collected within part one to retrieve many (1000) random samples with replacement, with each being representative of the original population. We then plotted this data with a histogram and density plot as seen within figure 2, with the data once again not skewed. Furthermore, the range between the distribution's middle 95 percent was much smaller than that of our original data simulation at an approximate value of one, meaning the margin of error was approximately + or - 0.5 percent. This suggests that resampling allows us to more accurately approximate the unknown distribution of the Gallup Data than the conclusions offered by only conducting a simulation of the data.
 
 
-\subsection{Methods Subsection}
-Much like the Introduction, subsections can be helpful for the Methods section. For example, you might describe data collection and the statistical analyses of the collected data in different subsections. Or, you may have different questions that require distinct methods. 
 
-\section{Results}
-Tie together the Introduction -- where you introduce the problem at hand -- and the methods --  what you propose to do to answer the question. Present your data, the results of your analyses, and how each reported aspect contributes to answering the question. This section should include table(s), statistic(s), and graphical displays. Make sure to put the results in a sensible order and that each result contributes a logical and developed solution. It should not just be a list. Avoid being repetitive. 
-
-\subsection{Results Subsection}
-Subsections can be helpful for the Results section, too. This can be particularly helpful if you have different questions to answer. 
+\section{Simulation over n and p}
+For the third part of this laboratory assignment we conducted the same analysis we had within part one, this time performing 10000 simulations for n in {100, 110, 120,...,3000} and p in {0.01, 0.02,...,0.99}, with n being the population size and p the probability that an individual was satisfied with the state of the country as reported within the gallup poll. Our goal here was to record the approximate margin of error for each simulation by recording the middle 95 percent of the distribution's range, and interpret how this margin would fluctuate as n and p were shifted. We then visualized this data by using \texttt{ggplot} to create a \texttt{geom_raster} plot, which as seen in figure 3 plots the estimated margin of error as a function of n and p. This figure suggests that margin of error peaks when at a probability value  of p = 0.5, and consequently decreases going towards zero and 1.00. This may suggest that the data simulation will be less accurate if people are not as certain of their opinions of the country, which would cause the probability to grow closer to a value of 0.5 where the simulation is the least accurate. Furthermore, the margin of error decreases across the entire graph as our sample size increases, which is concurrent with our knowledge that a larger sample will be more accurately representative of the data.
 
 
-\section{Discussion}
- You should objectively evaluate the evidence you found in the data. Do not embellish or wish-terpet (my made-up phase for making an interpretation you, or the researcher, wants to be true without the data \emph{actually} supporting it). Connect your findings to the existing information you provided in the Introduction.
 
-Finally, provide some concluding remarks that tie together the entire paper. Think of the last part of the results as abstract-like. Tell the reader what they just consumed -- what's the takeaway message?
+\section{Calculating the Actual Margin of Error}
+ The final part of this laboratory assignment had us conduct the same simulation we had within part three, though this time using the Wilson margin of error formula. This formula would calculate the actual margin of error, rather than approximate it such as we had by halving the middle 95 percent of the data's distribution. After collecting the simulation data, we visualized it by creating another raster plot, as seen within figure 4. This figure is concurrent with the assumption made in part three regarding the margin of error increasing as p approaches a value of 0.50, but differs from figure 3 in that we do not observe any discernible effect on the margin of error from the sample size (n). This could suggest that the sample size of our data is inaccurate and is not large enough to accurately approximate the actual population of individuals reported by Gallup. In order to get a more accurate approximation of how n effects the Wilson margin of error I would conduct this simulation over a larger range of sample sizes, and observe whether a discernible difference in  the data's margin of error emerges from a larger sample size.
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography

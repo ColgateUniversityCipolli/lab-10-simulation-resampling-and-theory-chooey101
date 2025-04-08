@@ -15,13 +15,13 @@ plot <- ggplot(data=data, aes(x = x)) +
   ) +
   geom_density(color = "red", linewidth = 1) +
   labs(
-    title = bquote("Beta Distribution (α = " ~ .(alpha) ~ ", β = " ~ .(beta) ~ ")"),
+    title = bquote("Simulation Study using a Binomial Distribution"),
     x = "Value",
     y = "Density"
   ) +
   theme_minimal()
 
-#The graph is not skewed; the middle 95 percent of the graph as a range of 200
+#The graph is not skewed; the middle 95 percent of the graph has a range of 200
 
 #Part 2: Perform Resampling
 
@@ -90,15 +90,14 @@ simulation_plot <- ggplot(stored_values, aes(x = p, y = n, fill = moe)) +
 #Part 4: actual margin of error calculation
 grid <- expand.grid(n = n_values, p = p_values)
 
-wilson_moe <- function(n, p, z = qnorm(0.975)) {
-  numerator <- z * sqrt(p * (1 - p) + (z^2 / (4 * n^2)))
-  denominator <- 1 + (z^2 / n)
-  return(numerator / denominator)
+Wilson_moe <- function(n, p, z = qnorm(0.975)) {
+  numerator <- z * sqrt((n * p * (1 - p) + (z^2 / 4)) / (n + z^2))
+  return(numerator)
 }
 
 
 #apply to all data
-grid$moe <- mapply(wilson_moe, grid$n, grid$p)
+grid$moe <- mapply(Wilson_moe, grid$n, grid$p)
 
 # Convert to tibble
 wilson_data <- as_tibble(grid)
